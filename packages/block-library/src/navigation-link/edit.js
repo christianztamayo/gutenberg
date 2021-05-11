@@ -321,7 +321,7 @@ export default function NavigationLinkEdit( {
 	// 3. It's neither null, nor undefined, as valid items might be either of those while loading.
 	// If those conditions are met, check if
 	// 1. The post status is published.
-	// 2. The post has no label.
+	// 2. The Navigation Link item has no label.
 	// If either of those is true, invalidate.
 	const isInvalid =
 		isPostType &&
@@ -643,7 +643,7 @@ export default function NavigationLinkEdit( {
 							{ isInvalid && (
 								<span className="wp-block-navigation-link__invalid-item">
 									{ ' ' }
-									(Invalid)
+									({ __( 'Invalid' ) })
 								</span>
 							) }
 						</div>
