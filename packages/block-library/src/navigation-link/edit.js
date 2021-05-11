@@ -48,7 +48,6 @@ import { store as coreStore } from '@wordpress/core-data';
  */
 import { ItemSubmenuIcon } from './icons';
 import { name } from './block.json';
-import { isPostfixUnaryExpression } from 'typescript';
 
 const ALLOWED_BLOCKS = [ 'core/navigation-link' ];
 
@@ -301,11 +300,10 @@ export default function NavigationLinkEdit( {
 	const itemLabelPlaceholder = __( 'Add link…' );
 	const ref = useRef();
 
-	// console.log( type, id );
-
 	const isPostType =
 		( kind && 'post-type' === kind ) || ( type && 'post' === type );
-	const linkHasId = id && ! isNaN( id );
+
+	const hasId = id && ! isNaN( id );
 	const postStatus = useSelect( ( select ) => {
 		if ( isPostType ) {
 			const { getEntityRecord } = select( coreStore );
@@ -317,7 +315,21 @@ export default function NavigationLinkEdit( {
 		return null;
 	} );
 
-	const isInvalid = isPostType && linkHasId && 'publish' !== postStatus;
+	// Check Navigation Link validity if:
+	// 1. Link is 'post-type'.
+	// 2. It has an id.
+	// 3. It's neither null, nor undefined, as valid items might be either of those while loading.
+	// If those conditions are met, check if
+	// 1. The post status is published.
+	// 2. The post has no label.
+	// If either of those is true, invalidate.
+	const isInvalid =
+		isPostType &&
+		hasId &&
+		'undefined' !== typeof postStatus &&
+		null !== postStatus
+			? 'publish' !== postStatus || ! label
+			: false;
 
 	const {
 		isAtMaxNesting,
