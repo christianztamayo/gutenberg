@@ -304,16 +304,19 @@ export default function NavigationLinkEdit( {
 		( kind && 'post-type' === kind ) || ( type && 'post' === type );
 
 	const hasId = id && ! isNaN( id );
-	const postStatus = useSelect( ( select ) => {
-		if ( isPostType ) {
+	const postStatus = useSelect(
+		( select ) => {
+			if ( ! isPostType ) {
+				return null;
+			}
+
 			const { getEntityRecord } = select( coreStore );
 			const entityRecord = getEntityRecord( 'postType', type, id );
 
 			return entityRecord?.status;
-		}
-
-		return null;
-	} );
+		},
+		[ isPostType, type, id ]
+	);
 
 	// Check Navigation Link validity if:
 	// 1. Link is 'post-type'.
@@ -324,12 +327,7 @@ export default function NavigationLinkEdit( {
 	// 2. The Navigation Link item has no label.
 	// If either of those is true, invalidate.
 	const isInvalid =
-		isPostType &&
-		hasId &&
-		'undefined' !== typeof postStatus &&
-		null !== postStatus
-			? 'publish' !== postStatus || ! label
-			: false;
+		isPostType && hasId && postStatus && 'publish' !== postStatus;
 
 	const {
 		isAtMaxNesting,
