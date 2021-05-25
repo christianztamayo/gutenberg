@@ -266,6 +266,34 @@ export const updateNavigationLinkBlockAttributes = (
 	} );
 };
 
+const useIsInvalidLink = ( kind, type, id ) => {
+	const isPostType = kind === 'post-type' || type === 'post';
+	const hasId = Number.isInteger( id );
+	const postStatus = useSelect(
+		( select ) => {
+			if ( ! isPostType ) {
+				return null;
+			}
+			const { getEntityRecord } = select( coreStore );
+			return getEntityRecord( 'postType', type, id )?.status;
+		},
+		[ isPostType, type, id ]
+	);
+
+	// Check Navigation Link validity if:
+	// 1. Link is 'post-type'.
+	// 2. It has an id.
+	// 3. It's neither null, nor undefined, as valid items might be either of those while loading.
+	// If those conditions are met, check if
+	// 1. The post status is published.
+	// 2. The Navigation Link item has no label.
+	// If either of those is true, invalidate.
+	const isInvalid =
+		isPostType && hasId && postStatus && 'publish' !== postStatus;
+
+	return isInvalid;
+};
+
 export default function NavigationLinkEdit( {
 	attributes,
 	isSelected,
@@ -299,35 +327,7 @@ export default function NavigationLinkEdit( {
 	const isDraggingWithin = useIsDraggingWithin( listItemRef );
 	const itemLabelPlaceholder = __( 'Add link…' );
 	const ref = useRef();
-
-	const isPostType =
-		( kind && 'post-type' === kind ) || ( type && 'post' === type );
-
-	const hasId = id && ! isNaN( id );
-	const postStatus = useSelect(
-		( select ) => {
-			if ( ! isPostType ) {
-				return null;
-			}
-
-			const { getEntityRecord } = select( coreStore );
-			const entityRecord = getEntityRecord( 'postType', type, id );
-
-			return entityRecord?.status;
-		},
-		[ isPostType, type, id ]
-	);
-
-	// Check Navigation Link validity if:
-	// 1. Link is 'post-type'.
-	// 2. It has an id.
-	// 3. It's neither null, nor undefined, as valid items might be either of those while loading.
-	// If those conditions are met, check if
-	// 1. The post status is published.
-	// 2. The Navigation Link item has no label.
-	// If either of those is true, invalidate.
-	const isInvalid =
-		isPostType && hasId && postStatus && 'publish' !== postStatus;
+	const isInvalid = useIsInvalidLink( kind, type, id );
 
 	const {
 		isAtMaxNesting,
