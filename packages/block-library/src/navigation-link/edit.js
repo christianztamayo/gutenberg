@@ -267,7 +267,8 @@ export const updateNavigationLinkBlockAttributes = (
 };
 
 const useIsInvalidLink = ( kind, type, id ) => {
-	const isPostType = kind === 'post-type' || type === 'post';
+	const isPostType =
+		'post-type' === kind || 'post' === type || 'page' === type;
 	const hasId = Number.isInteger( id );
 	const postStatus = useSelect(
 		( select ) => {
