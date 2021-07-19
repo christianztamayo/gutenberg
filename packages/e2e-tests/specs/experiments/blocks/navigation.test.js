@@ -403,6 +403,20 @@ describe( 'Navigation', () => {
 	} );
 
 	it( 'allows an empty navigation block to be created and manually populated using a mixture of internal and external links', async () => {
+		await mockPagesResponse( [
+			{
+				title: 'Home',
+				slug: 'home',
+			},
+			{
+				title: 'About',
+				slug: 'about',
+			},
+			{
+				title: 'Contact Us',
+				slug: 'contact',
+			},
+		] );
 		// Add the navigation block.
 		await insertBlock( 'Navigation' );
 
