@@ -121,6 +121,21 @@ async function mockAllMenusResponses(
 		  } ) )
 		: [];
 
+	/*
+		Explicitly mock page menu items in order to be able to fetch their data
+	 	with getEntityRecord — if not done, the method returns 404.
+	*/
+	const mappedPages = menus.length
+		? menus
+				.filter( ( menuItem ) => menuItem.object === 'page' )
+				.map( ( page ) => ( {
+					id: page.object_id,
+					type: 'page',
+					link: page.links[ 'wp:object' ].href,
+					title: page.title,
+				} ) )
+		: [];
+
 	await setUpResponseMocking( [
 		{
 			match: ( request ) =>
@@ -131,6 +146,11 @@ async function mockAllMenusResponses(
 			match: ( request ) =>
 				matchUrlToRoute( request.url(), REST_MENU_ITEMS_ROUTES ),
 			onRequestMatch: createJSONResponse( menuItems ),
+		},
+		{
+			match: ( request ) =>
+				matchUrlToRoute( request.url(), REST_PAGES_ROUTES ),
+			onRequestMatch: createJSONResponse( mappedPages ),
 		},
 	] );
 }
