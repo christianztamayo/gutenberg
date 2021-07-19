@@ -480,6 +480,20 @@ describe( 'Navigation', () => {
 	} );
 
 	it( 'encodes URL when create block if needed', async () => {
+		await mockPagesResponse( [
+			{
+				title: 'Home',
+				slug: 'home',
+			},
+			{
+				title: 'About',
+				slug: 'about',
+			},
+			{
+				title: 'Contact Us',
+				slug: 'contact',
+			},
+		] );
 		// Add the navigation block.
 		await insertBlock( 'Navigation' );
 
