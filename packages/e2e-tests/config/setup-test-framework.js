@@ -72,7 +72,7 @@ jest.setTimeout( PUPPETEER_TIMEOUT || 100000 );
 
 // The default timeout for `puppeteer-testing-library` is 3 seconds.
 configure( {
-	timeout: 5000,
+	timeout: 3000,
 } );
 
 async function setupBrowser() {
