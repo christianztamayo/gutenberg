@@ -144,7 +144,7 @@ function getSuggestionsQuery( type, kind ) {
  * 4: Theme colors
  * 5: Global styles
  *
- * @param {Object} context
+ * @param {Object}  context
  * @param {boolean} isSubMenu
  */
 function getColors( context, isSubMenu ) {
@@ -327,11 +327,10 @@ const useMissingText = ( type, isInvalid ) => {
 				<span className="wp-block-navigation-link__invalid-item">
 					{ ' ' }
 					(
-					{
-						__(
-							'Invalid'
-						) /* translators: Whether or not the navigation link is invalid. */
-					}
+					{ __(
+						/* translators: Whether or not the navigation link is invalid. */
+						'Invalid'
+					) }
 					)
 				</span>
 			) }
