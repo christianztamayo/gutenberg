@@ -8,11 +8,14 @@ import { isEmpty } from 'lodash';
  * WordPress dependencies
  */
 import { View } from '@wordpress/primitives';
-
-import { BlockCaption } from '@wordpress/block-editor';
+import {
+	BlockCaption,
+	store as blockEditorStore,
+} from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import { SandBox } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -34,6 +37,7 @@ const EmbedPreview = ( {
 	url,
 } ) => {
 	const [ isCaptionSelected, setIsCaptionSelected ] = useState( false );
+	const { locale } = useSelect( blockEditorStore ).getSettings();
 
 	function accessibilityLabelCreator( caption ) {
 		return isEmpty( caption )
@@ -127,6 +131,7 @@ const EmbedPreview = ( {
 							scripts={ scripts }
 							title={ iframeTitle }
 							// type={ sandboxClassnames }
+							lang={ locale }
 						/>
 					</View>
 				</TouchableWithoutFeedback>

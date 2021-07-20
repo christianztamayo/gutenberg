@@ -106,6 +106,7 @@ export default function Sandbox( {
 	type,
 	styles = [],
 	scripts = [],
+	lang = 'en',
 } ) {
 	const ref = useRef();
 	const [ width, setWidth ] = useState( 0 );
@@ -113,9 +114,6 @@ export default function Sandbox( {
 	const [ iframeHtml, setiFrameHtml ] = useState();
 
 	function trySandbox() {
-		// TODO: Use the device's locale
-		const lang = 'en';
-
 		// Put the html snippet into a html document, and update the state to refresh the WebView,
 		// we can use this in the future to inject custom styles or scripts.
 		// Scripts go into the body rather than the head, to support embedded content such as Instagram
