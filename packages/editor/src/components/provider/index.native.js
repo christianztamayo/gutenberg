@@ -82,11 +82,12 @@ class NativeEditorProvider extends Component {
 	}
 
 	componentDidMount() {
-		const { capabilities, updateSettings } = this.props;
+		const { capabilities, locale, updateSettings } = this.props;
 
 		updateSettings( {
 			...capabilities,
 			...this.getThemeColors( this.props ),
+			locale,
 		} );
 
 		this.subscriptionParentGetHtml = subscribeParentGetHtml( () => {
