@@ -287,9 +287,25 @@ describe( 'Navigation editor', () => {
 	} );
 
 	it( 'displays the first menu from the REST response when at least one menu exists', async () => {
+		const mappedPages = menuItemsFixture.length
+			? menuItemsFixture
+					.filter( ( menuItem ) => menuItem.object === 'page' )
+					.map( ( page ) => ( {
+						id: page.object_id,
+						type: 'page',
+						link: page._links[ 'wp:object' ].href,
+						title: page.title,
+					} ) )
+			: [];
+
 		await setUpResponseMocking( [
+			...getPagesMocks( { GET: mappedPages } ),
 			...getMenuMocks( { GET: assignMockMenuIds( menusFixture ) } ),
-			...getMenuItemMocks( { GET: menuItemsFixture } ),
+			{
+				match: ( request ) =>
+					matchUrlToRoute( request.url(), REST_PAGES_ROUTES ),
+				onRequestMatch: createJSONResponse( mappedPages ),
+			},
 		] );
 		await visitNavigationEditor();
 
@@ -342,6 +358,7 @@ describe( 'Navigation editor', () => {
 
 	it( 'displays suggestions when adding a link', async () => {
 		await setUpResponseMocking( [
+			...getPagesMocks( { GET: [] } ),
 			...getMenuMocks( { GET: assignMockMenuIds( menusFixture ) } ),
 			...getSearchMocks( { GET: searchFixture } ),
 		] );
