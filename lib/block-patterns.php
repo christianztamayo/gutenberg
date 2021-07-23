@@ -269,3 +269,17 @@ add_action(
 		}
 	}
 );
+
+/**
+ * Inject the block_types value into the API response.
+ *
+ * @param WP_REST_Response $response    The response object.
+ * @param object           $raw_pattern The unprepared pattern.
+ */
+function filter_block_pattern_response( $response, $raw_pattern ) {
+	$data = $response->get_data();
+	$data['block_types'] = array_map( 'sanitize_text_field', $raw_pattern->meta->wpop_block_types );
+	$response->set_data( $data );
+	return $response;
+}
+add_filter( 'rest_prepare_block_pattern', 'filter_block_pattern_response', 10, 2 );
