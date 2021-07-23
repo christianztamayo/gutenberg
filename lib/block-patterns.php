@@ -205,11 +205,6 @@ function remove_core_patterns() {
  * @since 5.8.0
  */
 function load_remote_patterns() {
-	// This is the core function that provides the same feature.
-	if ( function_exists( '_load_remote_block_patterns' ) ) {
-		return;
-	}
-
 	/**
 	 * Filter to disable remote block patterns.
 	 *
@@ -231,6 +226,10 @@ function load_remote_patterns() {
 
 		foreach ( $patterns as $settings ) {
 			$pattern_name = 'core/' . sanitize_title( $settings['title'] );
+			if ( WP_Block_Patterns_Registry::get_instance()->is_registered( $pattern_name ) ) {
+				unregister_block_pattern( $pattern_name );
+			}
+
 			if ( isset( $settings['block_types'] ) ) {
 				$settings['blockTypes'] = $settings['block_types'];
 				unset( $settings['block_types'] );
@@ -243,7 +242,6 @@ function load_remote_patterns() {
 		}
 	}
 }
-
 
 add_action(
 	'init',
@@ -267,7 +265,8 @@ add_action(
 		if ( $current_screen->is_block_editor || $is_site_editor ) {
 			load_remote_patterns();
 		}
-	}
+	},
+	15
 );
 
 /**
