@@ -40,6 +40,7 @@ import URLQueryController from '../url-query-controller';
 import InserterSidebar from '../secondary-sidebar/inserter-sidebar';
 import ListViewSidebar from '../secondary-sidebar/list-view-sidebar';
 import { store as editSiteStore } from '../../store';
+import MosaicView from '../mosaic-view';
 
 const interfaceLabels = {
 	secondarySidebar: __( 'Block Library' ),
@@ -58,6 +59,7 @@ function Editor( { initialSettings } ) {
 		template,
 		templateResolved,
 		isNavigationOpen,
+		editorMode,
 	} = useSelect( ( select ) => {
 		const {
 			isInserterOpened,
@@ -67,6 +69,7 @@ function Editor( { initialSettings } ) {
 			getEditedPostId,
 			getPage,
 			isNavigationOpened,
+			getEditorMode,
 		} = select( editSiteStore );
 		const { hasFinishedResolution, getEntityRecord } = select( coreStore );
 		const postType = getEditedPostType();
@@ -94,6 +97,7 @@ function Editor( { initialSettings } ) {
 				: false,
 			entityId: postId,
 			isNavigationOpen: isNavigationOpened(),
+			editorMode: getEditorMode(),
 		};
 	}, [] );
 	const { updateEditorSettings } = useDispatch( editorStore );
@@ -223,14 +227,16 @@ function Editor( { initialSettings } ) {
 										content={
 											<>
 												<EditorNotices />
-												{ template && (
-													<BlockEditor
-														setIsInserterOpen={
-															setIsInserterOpened
-														}
-													/>
-												) }
-												{ templateResolved &&
+												{ editorMode === 'visual' &&
+													template && (
+														<BlockEditor
+															setIsInserterOpen={
+																setIsInserterOpened
+															}
+														/>
+													) }
+												{ editorMode === 'visual' &&
+													templateResolved &&
 													! template &&
 													settings?.siteUrl &&
 													entityId && (
@@ -245,6 +251,9 @@ function Editor( { initialSettings } ) {
 															) }
 														</Notice>
 													) }
+												{ editorMode === 'mosaic' && (
+													<MosaicView />
+												) }
 												<KeyboardShortcuts />
 											</>
 										}
